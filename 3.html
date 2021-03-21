@@ -1,0 +1,89 @@
+<html> 
+<script type="text/javascript"> 
+var slen = 70; //秒针长度
+var mlen = 65; //分针
+var hlen = 45; //时针
+var ls = 0;
+var lm = 0;
+var lh = 0; 
+function draw() //画图
+{
+    var c = document.getElementById("myCanvas"); 
+    var cxt = c.getContext("2d"); 
+    cxt.beginPath(); //绘制不同路径
+    cxt.arc(200, 150, 5, 0, 2 * Math.PI, true); //表盘中心
+    cxt.fill(); 
+    cxt.closePath(); 
+   
+    cxt.beginPath(); 
+    cxt.arc(200, 150, 100, 0, 2 * Math.PI, true); //表盘外围
+    cxt.strokeStyle="black"; 
+	cxt.stroke(); 
+    cxt.closePath(); 
+   
+    cxt.beginPath(); 
+    cxt.translate(200, 150); //平移原点
+    cxt.rotate(-Math.PI / 2); 
+    cxt.save();  //把当前状态的一份拷贝压入到一个保存图像状态的栈中
+    for (var i = 0; i < 60; i++) //绘制矩形刻度线
+	{ 
+  	  if (i % 5 == 0) 
+	  { 
+    	  cxt.fillRect(80, 0, 20, 5); //定义了矩形的填充方式
+      } 
+	  else 
+	  { 
+      	  cxt.fillRect(90, 0, 10, 2); 
+      } 
+      cxt.rotate(Math.PI / 30); //每绘制一个刻度线旋转一次
+	} 
+    cxt.closePath(); 
+	setInterval("Refresh();", 1000); //每1秒钟调用refresh方法刷新时、分、秒针的位置
+}
+function Refresh()
+{
+	var c = document.getElementById("myCanvas"); 
+    var cxt = c.getContext("2d"); 
+	cxt.restore(); //从栈中弹出存储的图形状态并恢复Context2D对象的属性、剪切路径和变换矩阵的值
+	cxt.save(); 
+	cxt.rotate(ls * Math.PI / 30); 
+	cxt.clearRect(5, -1, slen+1, 4); //清除秒针上次显示内容 clearRect() 方法清空给定矩形内的指定像素
+	cxt.restore(); 
+	cxt.save();
+
+	cxt.rotate(lm * Math.PI / 30); 
+	cxt.clearRect(5, -1, mlen+1, 5); 
+	cxt.restore(); 
+	cxt.save(); 
+
+	cxt.rotate(lh * Math.PI / 6); 
+	cxt.clearRect(5, -3, hlen+1, 6); 
+	var time = new Date(); 
+	var s = ls=time.getSeconds(); 
+	var m = lm=time.getMinutes(); 
+	var h = lh=time.getHours();	 
+	cxt.restore(); 
+	cxt.save(); 
+	cxt.rotate(s * Math.PI / 30); 
+	cxt.fillRect(5, 0, slen, 2); 
+	cxt.restore(); 
+	cxt.save(); 
+	cxt.rotate(m * Math.PI / 30);  
+	cxt.fillRect(5, 0, mlen, 3); 
+	cxt.restore(); 
+	cxt.save(); 
+	cxt.rotate((h + m / 60) * Math.PI / 6); 
+	cxt.fillRect(5, -2, hlen, 4); 
+	
+}	
+
+</script>
+<body> 
+<fieldset>
+	<legend>时钟</legend>
+    <canvas id="myCanvas" width="400" height="300"></canvas> 
+	<br>
+	<button onClick="draw()">绘图</button> 
+</fieldset>
+</body> 
+</html>
